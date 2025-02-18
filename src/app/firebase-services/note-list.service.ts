@@ -7,45 +7,66 @@ import { Note } from '../interfaces/note.interface';
 })
 export class NoteListService {
 
-  traschNotes: Note[] = [];
+  trashNotes: Note[] = [];
   normalNotes: Note[] = [];
 
-  items$;
-  items;
+  // items$;
+  // items;
 
-  unsublist;
-  unsubSingel;
+  unsubNotes;
+  unsubTrash;
 
   firestore = inject(Firestore);
 
   constructor() { 
-
-    this.unsublist = onSnapshot(this.getNotesRef(), (list) =>{
-      list.forEach(element => {
-        // console.log(element.id)
-        console.log(this.steNoteObject(element.data(), element.id))
-      });
-    });
-
-    this.unsubSingel = onSnapshot(this.getSingelDocRef("notes", "43156146164"), (element ) =>{
-    });
-
-  this.unsubSingel();
-
-
-    this.items$ = collectionData(this.getNotesRef());
-    this.items = this.items$.subscribe((list) => {
-      list.forEach(element => {
-        console.log(element)
-      });
-    }) 
+    this.unsubNotes = this.subNotesList();
+    this.unsubTrash = this.subTrashList();
   }
 
   ngonDestroy(){
-    this.unsublist();
-    this.items.unsubscribe();
+    this.unsubNotes();
+    this.unsubTrash();
+    // this.items.unsubscribe();
   }
 
+  subTrashList(){
+    return onSnapshot(this.getTrashRef(), (list) =>{
+      this.trashNotes = [];
+      list.forEach(element => {
+        // console.log(element.id)
+      //   console.log(this.steNoteObject(element.data(), element.id))
+      
+      this.trashNotes.push(this.steNoteObject(element.data(), element.id))
+    });
+    });
+  }
+
+  //   this.unsubNotes = onSnapshot(this.getSingelDocRef("notes", "43156146164"), (element ) =>{
+  //   });
+
+  // this.unsubNotes();
+
+
+    // this.items$ = collectionData(this.getNotesRef());
+    // this.items = this.items$.subscribe((list) => {
+    //   list.forEach(element => {
+    //     console.log(element)
+    //   });
+    // }) 
+  // }
+
+
+  subNotesList(){
+    return onSnapshot(this.getNotesRef(), (list) =>{
+      this.normalNotes = [];
+      list.forEach(element => {
+        // console.log(element.id)
+      //   console.log(this.steNoteObject(element.data(), element.id))
+      this.normalNotes.push(this.steNoteObject(element.data(), element.id))
+      });
+      
+    });
+  }
 
   steNoteObject(obj: any, id: string): Note{
     return {
@@ -66,8 +87,14 @@ export class NoteListService {
       return collection(this.firestore, 'trash');
     }
 
+    // getTrashRef() {
+
+    // }
+
     getSingelDocRef(colID:string, docId:string){
       return doc(collection(this.firestore, colID), docId)
     }
   
 }
+
+
