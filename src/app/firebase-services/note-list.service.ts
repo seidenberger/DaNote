@@ -21,8 +21,8 @@ export class NoteListService {
     this.unsubTrash = this.subTrashList();
   }
 
-  async addNote(item: {}){
-    await addDoc(this.getNotesRef(),item).catch(
+  async addNote(note: Note){
+    await addDoc(this.getNotesRef(),note).catch(
       (err) => {console.error(err)}
     ).then(
       (docRef) => {console.log("document ID:", docRef?.id);}
