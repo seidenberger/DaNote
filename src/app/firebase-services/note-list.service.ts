@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, collectionData, doc, onSnapshot} from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, onSnapshot, addDoc} from '@angular/fire/firestore';
 import { Note } from '../interfaces/note.interface';
 
 @Injectable({
@@ -19,6 +19,14 @@ export class NoteListService {
   constructor() { 
     this.unsubNotes = this.subNotesList();
     this.unsubTrash = this.subTrashList();
+  }
+
+  async addNote(item: {}){
+    await addDoc(this.getNotesRef(),item).catch(
+      (err) => {console.error(err)}
+    ).then(
+      (docRef) => {console.log("document ID:", docRef?.id);}
+    )
   }
 
   ngonDestroy(){
@@ -57,9 +65,9 @@ export class NoteListService {
   }
 
 
-    getNotesRef(){
+  getNotesRef(){
       return collection(this.firestore, 'notes');
-    }
+  }
 
     getTrashRef(){
       return collection(this.firestore, 'trash');
